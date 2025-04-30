@@ -13,11 +13,13 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_VISUALIZATIONS_DIR = os.path.join(PROJECT_ROOT, 'visualizations')
 SAMPLE_VIDEOS_URLS = [
     'https://imgur.com/t/hummingbird/m2e2Nfa', # Hummingbird
-    'https://www.youtube.com/watch?v=w0JOoC-5_Lk', # Chopping
+    # 'https://www.youtube.com/watch?v=G-Fg7l7G1zw', # basic knife skills video from youtube
+    # 'https://youtube.com/shorts/8ibLix2XY2I?si=2W0e2m6T7ZIfmdL9',
+    # 'https://www.youtube.com/watch?v=w0JOoC-5_Lk', # Chopping
     'https://www.youtube.com/watch?v=t9OE3nxnI2Y', # Hammer training
-    'https://www.youtube.com/watch?v=aY3TrpiUOqE', # Bouncing ball
-    'https://www.youtube.com/watch?v=5EYY2J3nb5c', # Cooking
-    'https://www.reddit.com/r/gifs/comments/4qfif6/cheetah_running_at_63_mph_102_kph', # Cheetah
+    # 'https://www.youtube.com/watch?v=aY3TrpiUOqE', # Bouncing ball
+    # 'https://www.youtube.com/watch?v=5EYY2J3nb5c', # Cooking
+    # 'https://www.reddit.com/r/gifs/comments/4qfif6/cheetah_running_at_63_mph_102_kph', # Cheetah
     'https://www.youtube.com/watch?v=cMWb7NvWWuI', # Pendulum
     'https://www.youtube.com/watch?v=5g1T-ff07kM', # Excersise
     'https://www.youtube.com/watch?v=-Q3_7T5w4nE', # Excersise
@@ -27,7 +29,7 @@ SAMPLE_VIDEOS_URLS = [
 # Script arguments
 parser = argparse.ArgumentParser(description='Run the RepNet model on a given video.')
 parser.add_argument('--weights', type=str, default=os.path.join(PROJECT_ROOT, 'checkpoints', 'pytorch_weights.pth'), help='Path to the model weights (default: %(default)s).')
-parser.add_argument('--video', type=str, default=SAMPLE_VIDEOS_URLS[0], help='Video to test the model on, either a YouTube/http/local path (default: %(default)s).')
+parser.add_argument('--video', type=str, default=SAMPLE_VIDEOS_URLS[1], help='Video to test the model on, either a YouTube/http/local path (default: %(default)s).')
 parser.add_argument('--strides', nargs='+', type=int, default=[1, 2, 3, 4, 8], help='Temporal strides to try when testing on the sample video (default: %(default)s).')
 parser.add_argument('--device', type=str, default='cuda', help='Device to use for inference (default: %(default)s).')
 parser.add_argument('--no-score', action='store_true', help='If specified, do not plot the periodicity score.')
@@ -53,13 +55,18 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(video_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     raw_frames, frames = [], []
-    while cap.isOpened():
+    
+    # frames_count = 600
+    while cap.isOpened() :
         ret, frame = cap.read()
         if not ret or frame is None:
             break
         raw_frames.append(frame)
         frame = transform(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         frames.append(frame)
+        # if not frames_count:
+        #     break
+        # frames_count -= 1
     cap.release()
 
     # Load model
